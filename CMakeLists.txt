@@ -18,12 +18,7 @@ endif()
 # Définir où se trouvent les fichiers .hpp
 include_directories(headers)
 
-# Lister les fichiers source (.cpp)
-# On peut aussi utiliser file(GLOB SRCS "src/*.cpp") mais lister manuellement est plus propre
-set(SOURCES 
-    src/main.cpp
-    # Ajoutez ici vos futurs fichiers, ex: src/matrix.cpp
-)
+file(GLOB SOURCES "src/*.cpp")
 
 # Créer l'exécutable
 add_executable(ai_lib ${SOURCES})
