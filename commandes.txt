@@ -1,0 +1,14 @@
+Première fois	
+cmake -S . -B build
+
+
+Recompiler après une modif	
+cmake --build build
+
+
+Forcer une recompilation totale	
+cmake --build build --clean-first
+
+
+Changer de mode (Debug -> Release)	
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
