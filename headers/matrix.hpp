@@ -27,7 +27,7 @@ public:
     Matrix scale(double scale) const;
     double sum() const;
     void fill(double val);
-    Matrix traspose() const;
+    Matrix transpose() const;
 
 private:
     int rows;

@@ -88,7 +88,7 @@ void Matrix::fill(double val = 0) {
     std::fill(data_.begin(), data_.end(), val);
 }
 
-Matrix Matrix::traspose() const {
+Matrix Matrix::transpose() const {
     Matrix result(columns, rows);
 
     for (int r = 0; r < rows; r++) {
