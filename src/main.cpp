@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-void main() {
+int main() {
 
     std::vector<double> data;
 
@@ -12,7 +12,4 @@ void main() {
 
     Matrix matrix(data, 10, 10);
 
-    for (double num : matrix.getData()) {
-        std::cout << num << std::endl;
-    }
 }
