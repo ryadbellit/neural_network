@@ -2,6 +2,7 @@
 #include <iostream>
 #include <optional>
 #include <utility>
+
 class Matrix {
 public:
 
@@ -23,9 +24,10 @@ public:
     std::optional<Matrix> operator+(const Matrix& other) const;
     std::optional<Matrix> operator-(const Matrix& other) const;
     
-    Matrix scale(double scale);
+    Matrix scale(double scale) const;
     double sum() const;
-    
+    void fill(double val);
+    Matrix traspose() const;
 
 private:
     int rows;

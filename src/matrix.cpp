@@ -23,8 +23,23 @@ std::optional<Matrix> Matrix::operator*(const Matrix& other) const {
         return std::nullopt;
     }
     
+    Matrix result = Matrix(this->rows, other.columns);
 
-    return Matrix(other.rows, other.columns);
+    for (int i = 0; i < rows; i++) {
+        for (int k = 0; k < columns; k++) {
+
+            double val = this->data_[i * this->columns + k];
+
+            int rowResult = i * other.columns;
+            int rowOther = k * other.columns;
+
+            for (int j = 0; j < other.columns; j++) {
+                result.data_[rowResult + j] = val * other.data_[rowOther + j];
+            }
+        }
+    }
+
+    return result;
 }
 
 std::optional<Matrix> Matrix::operator+(const Matrix& other) const {
@@ -69,16 +84,31 @@ double Matrix::sum() const {
     return std::accumulate(data_.begin(), data_.end(), 0);
 }
 
+void Matrix::fill(double val = 0) {
+    std::fill(data_.begin(), data_.end(), val);
+}
+
+Matrix Matrix::traspose() const {
+    Matrix result(columns, rows);
+
+    for (int r = 0; r < rows; r++) {
+        for (int c = 0; c < columns; c++) {
+            result(c, r) = (*this)(r, c);
+        }
+    }
+
+    return result;
+    
+}
+
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
-    auto [r, c] = matrix.dim(); // Utilisation de votre fonction dim()
+    auto [r, c] = matrix.dim();
     
     os << "Matrix(" << r << "x" << c << "):\n";
     
     for (int i = 0; i < r; ++i) {
         os << "[ ";
         for (int j = 0; j < c; ++j) {
-            // std::setw(8) assure que chaque nombre occupe 8 caractères
-            // pour que les colonnes soient bien alignées
             os << std::setw(8) << matrix(i, j) << " ";
         }
         os << "]\n";
