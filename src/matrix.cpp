@@ -101,15 +101,26 @@ Matrix Matrix::transpose() const {
     
 }
 
+Matrix Matrix::relu() const {
+    
+    Matrix result = Matrix(this->rows, this->columns);
+
+    std::transform(data_.begin(), data_.end(), result.data_.begin(),
+                   [](double val) { return std::max(val, 0.0); });
+
+    return result;
+}
+
+
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
     auto [r, c] = matrix.dim();
     
     os << "Matrix(" << r << "x" << c << "):\n";
     
-    for (int i = 0; i < r; ++i) {
+    for (int i = 0; i < r; i++) {
         os << "[ ";
-        for (int j = 0; j < c; ++j) {
-            os << std::setw(8) << matrix(i, j) << " ";
+        for (int j = 0; j < c; j++) {
+            os << std::setw(6) << matrix(i, j) << " ";
         }
         os << "]\n";
     }

@@ -24,6 +24,7 @@ public:
     std::optional<Matrix> operator+(const Matrix& other) const;
     std::optional<Matrix> operator-(const Matrix& other) const;
     
+    Matrix relu() const;
     Matrix scale(double scale) const;
     double sum() const;
     void fill(double val);
