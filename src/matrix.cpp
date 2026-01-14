@@ -83,6 +83,15 @@ Matrix Matrix::operator*(double scale) const {
     return result;
 }
 
+Matrix Matrix::operator/(double scale) const {
+    Matrix result = Matrix(this->rows, this->columns);
+
+    std::transform(data_.begin(), data_.end(), result.data_.begin(),
+                   [scale](double val) { return val / scale; });
+
+    return result;
+}
+
 double Matrix::sum() const {
     return std::accumulate(data_.begin(), data_.end(), 0.0);
 }
@@ -121,7 +130,7 @@ Matrix Matrix::softmax() const {
         result.data_[i] = std::pow(std::numbers::e, data_[i]);
     }
 
-    result = result * (1 / result.sum());
+    result = result / result.sum();
 
     return result;
 }
@@ -159,6 +168,8 @@ double Matrix::determinant() const {
     if (rows != columns) {
         return 0;
     }
+
+    return -1;
 }
 
 
@@ -168,12 +179,13 @@ std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
     os << "Matrix(" << r << "x" << c << "):\n";
     
     for (int i = 0; i < r; i++) {
-    for (int i = 0; i < r; i++) {
         os << "[ ";
         for (int j = 0; j < c; j++) {
             os << std::setw(10) << matrix(i, j) << " ";
         }
         os << "]\n";
     }
+
     return os;
+
 }

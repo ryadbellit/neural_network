@@ -1,28 +1,29 @@
 #include <matrix.hpp>
 
+#include <chrono>
+
+
 int main() {
 
-    std::vector<double> data;
+    int rows = 1000;
+    int columns = 1000;
 
-    for (int i = 0; i < 100; i++) {
-        data.push_back(i);
-    }
+    Matrix matrix(rows * 10, columns * 10);
+    Matrix matrix2(rows * 10, columns * 10);
 
-    Matrix matrix(10, 10, data);
+    matrix.fillRandom();
+    matrix2.fillRandom();
 
-    std::vector<double> data2;
+    auto start = std::chrono::steady_clock::now();
 
-    for (int i = 100; i >= 0; i--) {
-        data2.push_back(i);
-    }
+    Matrix matrix3 = *(matrix * matrix2);
 
-    Matrix matrix2(10, 10, data2);
+    auto end = std::chrono::steady_clock::now();
 
-    Matrix matrix3 = *(matrix - matrix2);
+    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
-    std::cout << matrix << std::endl;
-    std::cout << matrix2 << std::endl;
-    std::cout << matrix3 << std::endl;
 
-    std::cout << matrix.relu() << std::endl;
+    std::cout << "Fini!" << std::endl;
+    std::cout << "Temps : " << duration.count() << "secondes" << std::endl;
+
 }

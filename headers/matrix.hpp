@@ -20,10 +20,11 @@ public:
 
     double& operator()(int rows, int columns);
     double operator()(int rows, int columns) const;
-    std::optional<Matrix> operator*(const Matrix& other) const;
     Matrix operator*(double scale) const;
+    Matrix operator/(double scale) const;
     std::optional<Matrix> operator+(const Matrix& other) const;
     std::optional<Matrix> operator-(const Matrix& other) const;
+    std::optional<Matrix> operator*(const Matrix& other) const;
     Matrix& operator=(const Matrix& other);
     bool operator==(const Matrix& other) const;
 
