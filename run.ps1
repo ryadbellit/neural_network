@@ -1,8 +1,18 @@
-$path = "build\Debug\ai_lib.exe"
-if (-not (Test-Path $path)) { $path = "build\ai_lib.exe" }
+# Créer le dossier de build si nécessaire
+if (-not (Test-Path build)) { New-Item -Path build -ItemType Directory }
 
-if (Test-Path $path) {
-    & $path
+Write-Host "--- Compilation en cours ---" -ForegroundColor Cyan
+cd build
+cmake ..
+cmake --build . --config Release
+
+# Vérifier si l'exécutable existe (en cherchant dans Debug ou à la racine du build)
+$exePath = "./ai_lib.exe"
+
+if (Test-Path $exePath) {
+    Write-Host "--- Lancement de l'application ---" -ForegroundColor Green
+    & $exePath
 } else {
-    Write-Host "Erreur : ai_lib.exe introuvable. Avez-vous compile le projet ?" -ForegroundColor Red
+    Write-Host "Erreur : ai_lib.exe introuvable après compilation." -ForegroundColor Red
 }
+cd ..

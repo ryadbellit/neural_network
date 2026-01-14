@@ -1,7 +1,7 @@
 #include <vector>
-#include <iostream>
 #include <optional>
 #include <utility>
+#include <iostream>
 
 class Matrix {
 public:
@@ -16,6 +16,7 @@ public:
     int getColumns() const { return columns; }
     int getRows() const { return rows; }
     std::pair<double, double> dim() const { return {rows, columns}; }
+    int size() const { return columns * rows; }
 
     double& operator()(int rows, int columns);
     double operator()(int rows, int columns) const;
@@ -23,11 +24,16 @@ public:
     Matrix operator*(double scale) const;
     std::optional<Matrix> operator+(const Matrix& other) const;
     std::optional<Matrix> operator-(const Matrix& other) const;
-    
-    Matrix scale(double scale) const;
+    Matrix& operator=(const Matrix& other);
+    bool operator==(const Matrix& other) const;
+
+    Matrix relu() const;
+    Matrix softmax() const;
     double sum() const;
     void fill(double val);
     Matrix transpose() const;
+    void fillRandom(double lower = -10, double upper = 10);
+    double determinant() const;
 
 private:
     int rows;
