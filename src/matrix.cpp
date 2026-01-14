@@ -168,6 +168,7 @@ std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
     os << "Matrix(" << r << "x" << c << "):\n";
     
     for (int i = 0; i < r; i++) {
+    for (int i = 0; i < r; i++) {
         os << "[ ";
         for (int j = 0; j < c; j++) {
             os << std::setw(10) << matrix(i, j) << " ";
