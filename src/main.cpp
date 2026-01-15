@@ -1,29 +1,30 @@
 #include <matrix.hpp>
 
 #include <chrono>
-
+#include <omp.h>
 
 int main() {
 
-    int rows = 1000;
-    int columns = 1000;
+    omp_set_num_threads(8);
 
-    Matrix matrix(rows * 10, columns * 10);
-    Matrix matrix2(rows * 10, columns * 10);
+    int rows = 100000;
+    int columns = 100000;
+
+    Matrix matrix(rows, columns);
+    Matrix matrix2(rows, columns);
 
     matrix.fillRandom();
     matrix2.fillRandom();
 
     auto start = std::chrono::steady_clock::now();
 
-    Matrix matrix3 = *(matrix * matrix2);
+    std::cout << matrix.sum() << std::endl;
 
     auto end = std::chrono::steady_clock::now();
 
     auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
 
-
     std::cout << "Fini!" << std::endl;
-    std::cout << "Temps : " << duration.count() << "secondes" << std::endl;
+    std::cout << "Temps : " << duration.count() << " secondes" << std::endl;
 
 }

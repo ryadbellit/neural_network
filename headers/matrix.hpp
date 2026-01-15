@@ -29,12 +29,14 @@ public:
     bool operator==(const Matrix& other) const;
 
     Matrix relu() const;
+    Matrix reluDerivative() const;
     Matrix softmax() const;
+    Matrix stable_softmax() const;
     double sum() const;
     void fill(double val);
     Matrix transpose() const;
     void fillRandom(double lower = -10, double upper = 10);
-    double determinant() const;
+    double maxValue() const;
 
 private:
     int rows;

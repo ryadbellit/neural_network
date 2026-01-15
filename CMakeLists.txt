@@ -8,11 +8,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+find_package(OpenMP REQUIRED)
+
 # Options de compilation (Alertes maximales et optimisation)
 if(MSVC)
     add_compile_options(/W4 /O2)
 else()
-    add_compile_options(-Wall -Wextra -pedantic -O3)
+    add_compile_options(-Wall -Wextra -pedantic -O3 -fopenmp)
 endif()
 
 # Définir où se trouvent les fichiers .hpp
@@ -22,3 +24,7 @@ file(GLOB SOURCES "src/*.cpp")
 
 # Créer l'exécutable
 add_executable(ai_lib ${SOURCES})
+
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(ai_lib PUBLIC OpenMP::OpenMP_CXX)
+endif()

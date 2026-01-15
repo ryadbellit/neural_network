@@ -5,6 +5,7 @@
 #include <numeric>
 #include <iomanip>
 #include <chrono>
+#include <omp.h>
 
 inline double& Matrix::operator()(int rows, int columns) {
     if (rows >= this->rows || columns >= this->columns || rows < 0 || columns < 0) {
@@ -28,6 +29,7 @@ std::optional<Matrix> Matrix::operator*(const Matrix& other) const {
     
     Matrix result = Matrix(this->rows, other.columns);
 
+    #pragma omp parallel for
     for (int i = 0; i < rows; i++) {
         for (int k = 0; k < columns; k++) {
 
@@ -123,17 +125,70 @@ Matrix Matrix::relu() const {
     return result;
 }
 
-Matrix Matrix::softmax() const {
+Matrix Matrix::reluDerivative() const {
+
     Matrix result = Matrix(this->rows, this->columns);
 
-    for (int i = 0; i < size(); i++) {
-        result.data_[i] = std::pow(std::numbers::e, data_[i]);
-    }
-
-    result = result / result.sum();
+    std::transform(data_.begin(), data_.end(), result.data_.begin(),
+                   [](double val) { return val > 0 ? 1.0 : 0.0 ; });
 
     return result;
 }
+
+
+Matrix Matrix::softmax() const {
+
+    Matrix result = Matrix(this->rows, this->columns);
+    constexpr double epsilon = 1e-9;
+
+    for (int i = 0; i < size(); i++) {
+
+        double rowSum = 0.0;
+        int offset = i * columns;
+
+        for (int j = 0; j < columns; j++) {
+            double e_x = std::exp(data_[offset + j]);
+            result.data_[offset + j] = e_x;
+            rowSum += e_x;
+        }
+
+        for (int j = 0; j < columns; j++) {
+            result.data_[offset + j] /= (rowSum + epsilon); // Add epsilon to avoid division by 0
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::stable_softmax() const {
+
+    Matrix result = Matrix(this->rows, this->columns);
+    constexpr double epsilon = 1e-9;
+
+    for (int i = 0; i < size(); i++) {
+
+        int offset = i * columns;
+        double rowMax = data_[offset];
+
+        for (int j = 1; j < columns; j++) {
+            rowMax = std::max(rowMax, data_[offset + j]);
+        }
+
+        double rowSum = 0.0;
+        for (int j = 0; j < columns; j++) {
+            double e_x = std::exp(data_[offset + j] - rowMax);
+            result.data_[offset + j] = e_x;
+            rowSum += e_x;
+        }
+
+        for (int j = 0; j < columns; j++) {
+            result.data_[offset + j] /= (rowSum + epsilon);
+        }
+    }
+
+    return result;
+}
+
 
 bool Matrix::operator==(const Matrix& other) const {
     if (this->dim() != other.dim()) {
@@ -164,14 +219,9 @@ void Matrix::fillRandom(double lower, double upper) {
     std::generate(data_.begin(), data_.end(), [&]() { return distribution(generator); } );
 }
 
-double Matrix::determinant() const {
-    if (rows != columns) {
-        return 0;
-    }
-
-    return -1;
+double Matrix::maxValue() const {
+    return *std::max_element(data_.begin(), data_.end());
 }
-
 
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
     auto [r, c] = matrix.dim();
