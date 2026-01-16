@@ -1,4 +1,5 @@
 #include <matrix.hpp>
+#include <cmath>
 
 enum class Activation { RELU, SOFTMAX, NONE };
 
@@ -9,20 +10,21 @@ public:
         weights(inputSize, outputSize), biases(1, outputSize), 
         lastInput(0, 0), lastOutput(0, 0), type(act) {
         
-        double scale;
+        double bound;
+        
         switch (type) {
             case Activation::RELU:
-                scale = std::sqrt(2.0 / inputSize); // Xavier initialization
+                bound = std::sqrt(2.0 / inputSize); // Xavier initialization
                 break;
             case Activation::SOFTMAX:
-                scale = std::sqrt(2.0 / inputSize + outputSize); // He initialization
+                bound = std::sqrt(2.0 / inputSize + outputSize); // He initialization
                 break;
             case Activation::NONE:
-                scale = 0.5;
+                bound = 0.5;
                 break;
         }
 
-        weights.fillRandom(-scale, scale);
+        weights.fillRandom(-bound, bound);
         biases.fill(0.01);
     }
 
@@ -30,6 +32,7 @@ public:
     Matrix backward(const Matrix& outputGradient, const double learningRate);
     Matrix getWeights() const { return weights; }
     Matrix getBiases() const { return biases; }
+
 private:
     Matrix weights;
     Matrix biases;

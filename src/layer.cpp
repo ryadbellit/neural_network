@@ -2,7 +2,6 @@
 
 Matrix Layer::forward(const Matrix& input) {
 
-
     auto firstProduct = input * weights;
     if (!firstProduct) {
         throw std::runtime_error("Matrix sizes are not compatible");
@@ -36,13 +35,13 @@ Matrix Layer::forward(const Matrix& input) {
 }
 
 Matrix Layer::backward(const Matrix& outputGradient, const double learningRate) {
-
+    return outputGradient * learningRate;
 }
 
 Matrix Layer::applyActivation(const Matrix& matrix) {
-
+    return matrix;
 }
 
 Matrix Layer::applyActivationDerivative(const Matrix& matrix) {
-
+    return matrix;
 }

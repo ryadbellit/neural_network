@@ -135,13 +135,12 @@ Matrix Matrix::reluDerivative() const {
     return result;
 }
 
-
 Matrix Matrix::softmax() const {
 
     Matrix result = Matrix(this->rows, this->columns);
     constexpr double epsilon = 1e-9;
 
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < rows; i++) {
 
         double rowSum = 0.0;
         int offset = i * columns;
@@ -165,7 +164,7 @@ Matrix Matrix::stable_softmax() const {
     Matrix result = Matrix(this->rows, this->columns);
     constexpr double epsilon = 1e-9;
 
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < rows; i++) {
 
         int offset = i * columns;
         double rowMax = data_[offset];

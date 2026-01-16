@@ -7,8 +7,8 @@ int main() {
 
     omp_set_num_threads(8);
 
-    int rows = 100000;
-    int columns = 100000;
+    int rows = 1000 ;
+    int columns = 1000;
 
     Matrix matrix(rows, columns);
     Matrix matrix2(rows, columns);
@@ -18,7 +18,7 @@ int main() {
 
     auto start = std::chrono::steady_clock::now();
 
-    std::cout << matrix.sum() << std::endl;
+    std::cout << matrix.stable_softmax().sum() << std::endl;
 
     auto end = std::chrono::steady_clock::now();
 
