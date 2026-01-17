@@ -7,8 +7,8 @@ int main() {
 
     omp_set_num_threads(8);
 
-    int rows = 1000 ;
-    int columns = 1000;
+    int rows = 100;
+    int columns = 100;
 
     Matrix matrix(rows, columns);
     Matrix matrix2(rows, columns);
@@ -22,9 +22,9 @@ int main() {
 
     auto end = std::chrono::steady_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
     std::cout << "Fini!" << std::endl;
-    std::cout << "Temps : " << duration.count() << " secondes" << std::endl;
+    std::cout << "Temps : " << duration.count() << " microseconds" << std::endl;
 
 }

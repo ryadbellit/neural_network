@@ -5,7 +5,9 @@
 #include <numeric>
 #include <iomanip>
 #include <chrono>
+#include <stdexcept>
 #include <omp.h>
+
 
 inline double& Matrix::operator()(int rows, int columns) {
     if (rows >= this->rows || columns >= this->columns || rows < 0 || columns < 0) {
@@ -21,10 +23,9 @@ inline double Matrix::operator()(int rows, int columns) const {
     return data_[rows * this->columns + columns];
 }
 
-
-std::optional<Matrix> Matrix::operator*(const Matrix& other) const {
+Matrix Matrix::operator*(const Matrix& other) const {
     if (this->columns != other.rows) {
-        return std::nullopt;
+        throw std::invalid_argument("Invalid matrices dimensions");
     }
     
     Matrix result = Matrix(this->rows, other.columns);
@@ -47,9 +48,9 @@ std::optional<Matrix> Matrix::operator*(const Matrix& other) const {
     return result;
 }
 
-std::optional<Matrix> Matrix::operator+(const Matrix& other) const {
-    if (this->columns != other.columns || this->rows != other.rows) {
-        return std::nullopt;
+Matrix Matrix::operator+(const Matrix& other) const {
+    if (dim() != other.dim()) {
+        throw std::invalid_argument("Matrices should have the same dimensions");
     }
 
     Matrix result = Matrix(this->rows, this->columns);
@@ -61,9 +62,9 @@ std::optional<Matrix> Matrix::operator+(const Matrix& other) const {
     return result;
 }
 
-std::optional<Matrix> Matrix::operator-(const Matrix& other) const {
-    if (this->columns != other.columns || this->rows != other.rows) {
-        return std::nullopt;
+Matrix Matrix::operator-(const Matrix& other) const {
+    if (dim() != other.dim()) {
+        throw std::invalid_argument("Matrices should have the same dimensions");
     }
 
     Matrix result = Matrix(this->rows, this->columns);
@@ -76,7 +77,7 @@ std::optional<Matrix> Matrix::operator-(const Matrix& other) const {
 }
 
 Matrix Matrix::operator*(double scale) const {
-
+    
     Matrix result = Matrix(this->rows, this->columns);
 
     std::transform(data_.begin(), data_.end(), result.data_.begin(),
@@ -106,13 +107,15 @@ Matrix Matrix::transpose() const {
     Matrix result(columns, rows);
 
     for (int r = 0; r < rows; r++) {
+
+        int offset = r * columns;
+
         for (int c = 0; c < columns; c++) {
-            result(c, r) = (*this)(r, c);
+            result.data_[c * rows + r] = data_[offset + c];
         }
     }
 
     return result;
-    
 }
 
 Matrix Matrix::relu() const {
@@ -138,7 +141,6 @@ Matrix Matrix::reluDerivative() const {
 Matrix Matrix::softmax() const {
 
     Matrix result = Matrix(this->rows, this->columns);
-    constexpr double epsilon = 1e-9;
 
     for (int i = 0; i < rows; i++) {
 
@@ -152,7 +154,7 @@ Matrix Matrix::softmax() const {
         }
 
         for (int j = 0; j < columns; j++) {
-            result.data_[offset + j] /= (rowSum + epsilon); // Add epsilon to avoid division by 0
+            result.data_[offset + j] /= (rowSum);
         }
     }
 
@@ -162,7 +164,6 @@ Matrix Matrix::softmax() const {
 Matrix Matrix::stable_softmax() const {
 
     Matrix result = Matrix(this->rows, this->columns);
-    constexpr double epsilon = 1e-9;
 
     for (int i = 0; i < rows; i++) {
 
@@ -181,7 +182,7 @@ Matrix Matrix::stable_softmax() const {
         }
 
         for (int j = 0; j < columns; j++) {
-            result.data_[offset + j] /= (rowSum + epsilon);
+            result.data_[offset + j] /= rowSum;
         }
     }
 
@@ -190,6 +191,7 @@ Matrix Matrix::stable_softmax() const {
 
 
 bool Matrix::operator==(const Matrix& other) const {
+
     if (this->dim() != other.dim()) {
         return false;
     }
@@ -197,15 +199,13 @@ bool Matrix::operator==(const Matrix& other) const {
     return this->data_ == other.data_;
 }
 
-Matrix& Matrix::operator=(const Matrix& other) {
-    
-    if (this == &other) {
-        return *this;
-    }
+Matrix& Matrix::operator=(const Matrix& other) noexcept { // no except needed for std::move()
 
-    this->rows = other.rows;
-    this->columns = other.columns;
-    this->data_ = other.data_;
+    if (this != &other) {
+        this->rows = other.rows;
+        this->columns = other.columns;
+        this->data_ = std::move(other.data_);
+    }
 
     return *this;
 }
@@ -217,6 +217,37 @@ void Matrix::fillRandom(double lower, double upper) {
 
     std::generate(data_.begin(), data_.end(), [&]() { return distribution(generator); } );
 }
+
+Matrix Matrix::elementMultiplication(const Matrix& other) {
+
+    if (dim() != other.dim()) {
+        throw std::invalid_argument("Matrices should have the same dimensions");
+    }
+    
+    Matrix result(*this);
+
+    std::transform(this->data_.begin(), this->data_.end(),
+                other.data_.begin(), result.data_.begin(),
+                std::multiplies<double>());
+
+    return result;
+}
+
+Matrix Matrix::elementDivision(const Matrix& other) {
+
+    if (dim() != other.dim()) {
+        throw std::invalid_argument("Matrices should have the same dimensions");
+    }
+    
+    Matrix result(*this);
+
+    std::transform(this->data_.begin(), this->data_.end(),
+                other.data_.begin(), result.data_.begin(),
+                std::divides<double>());
+
+    return result;
+}
+
 
 double Matrix::maxValue() const {
     return *std::max_element(data_.begin(), data_.end());
@@ -236,5 +267,4 @@ std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
     }
 
     return os;
-
 }
