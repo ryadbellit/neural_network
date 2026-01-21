@@ -17,7 +17,7 @@ inline double& Matrix::operator()(int rows, int columns) {
 }
 
 inline double Matrix::operator()(int rows, int columns) const {
-    if (rows > this->rows || columns > this->columns || rows < 0 || columns < 0) {
+    if (rows >= this->rows || columns >= this->columns || rows < 0 || columns < 0) {
         throw std::out_of_range("Position is out of bounds.");
     }
     return data_[rows * this->columns + columns];

@@ -1,24 +1,21 @@
 #include <vector>
-#include <optional>
-#include <utility>
 #include <iostream>
 
 class Matrix {
 public:
 
     Matrix() : rows(0), columns(0), data_(std::vector<double>()) {}
-
     Matrix(const int rows, const int columns, const double def_val = 0.0) : rows(rows), columns(columns),  
         data_(std::vector<double>(columns * rows, def_val)) {}
 
     Matrix(const int rows, const int columns, const std::vector<double>& data) : rows(rows), columns(columns), data_(data) {}
-
     Matrix(const Matrix& matrix) : Matrix(matrix.rows, matrix.columns, matrix.data_) {}
 
     int getRows() const { return rows; }
     int getColumns() const { return columns; }
-    std::pair<double, double> dim() const { return {rows, columns}; }
     int size() const { return columns * rows; }
+    std::pair<double, double> dim() const { return {rows, columns}; }
+
 
     double& operator()(int rows, int columns);
     double operator()(int rows, int columns) const;

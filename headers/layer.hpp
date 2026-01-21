@@ -30,9 +30,10 @@ public:
 
     Matrix forward(const Matrix& input);
     Matrix backward(const Matrix& outputGradient, const double learningRate);
+    double loss(const Matrix& result, int answer);
     Matrix getWeights() const { return weights; }
     Matrix getBiases() const { return biases; }
-
+    
 private:
     Matrix weights;
     Matrix biases;

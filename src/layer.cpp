@@ -1,29 +1,21 @@
 #include <layer.hpp>
+#include <array>
 
 Matrix Layer::forward(const Matrix& input) {
-
-    auto firstProduct = input * weights;
-    if (!firstProduct) {
-        throw std::runtime_error("Matrix sizes are not compatible");
-    }
     
-    auto z = firstProduct.value() + biases;
+    Matrix output = (input * weights) + biases;
 
-    if (!z) {
-        throw std::runtime_error("Biases size is not compatible");
-    }
-
-    Matrix result(z.value().getRows(), z.value().getColumns());
+    Matrix result(output.getRows(), output.getColumns());
 
     switch (type) {
         case Activation::RELU:
-            result = z.value().relu();
+            result = output.relu();
             break;
         case Activation::SOFTMAX:
-            result = z.value().stable_softmax();
+            result = output.stable_softmax();
             break;
         case Activation::NONE:
-            result = z.value();
+            result = output;
             break;
     }
 
@@ -32,6 +24,12 @@ Matrix Layer::forward(const Matrix& input) {
 
     return result;
 
+}
+
+double Layer::loss(const Matrix& result, int answer) {
+    constexpr double epsilon = 1e-15;
+
+    return -std::log(result(0, answer) == 0 ? epsilon : result(0, answer));
 }
 
 Matrix Layer::backward(const Matrix& outputGradient, const double learningRate) {
