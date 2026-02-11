@@ -18,7 +18,7 @@ public:
 
 
     double& operator()(int rows, int columns);
-    double operator()(int rows, int columns) const;
+    double operator()(const int rows, const int columns) const;
     Matrix operator*(double scale) const;
     Matrix operator/(double scale) const;
 
@@ -27,8 +27,8 @@ public:
     Matrix operator*(const Matrix& other) const;
     Matrix operator/(const Matrix& other) const;
     
-    Matrix& operator=(const Matrix& other);
-    bool operator==(const Matrix& other) const;
+    Matrix& operator=(const Matrix& other) noexcept;
+    bool operator==(const Matrix& other) const noexcept;
 
     Matrix relu() const;
     Matrix reluDerivative() const;

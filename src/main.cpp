@@ -5,10 +5,10 @@
 
 int main() {
 
-    omp_set_num_threads(8);
+    //omp_set_num_threads(8);
 
-    int rows = 100;
-    int columns = 100;
+    int rows = 1000;
+    int columns = 1000;
 
     Matrix matrix(rows, columns);
     Matrix matrix2(rows, columns);

@@ -9,14 +9,14 @@
 #include <omp.h>
 
 
-inline double& Matrix::operator()(int rows, int columns) {
+double& Matrix::operator()(int rows, int columns) {
     if (rows >= this->rows || columns >= this->columns || rows < 0 || columns < 0) {
         throw std::out_of_range("Position is out of bounds.");
     }
     return data_[rows * this->columns + columns];
 }
 
-inline double Matrix::operator()(int rows, int columns) const {
+double Matrix::operator()(const int rows, const int columns) const {
     if (rows >= this->rows || columns >= this->columns || rows < 0 || columns < 0) {
         throw std::out_of_range("Position is out of bounds.");
     }
@@ -190,7 +190,7 @@ Matrix Matrix::stable_softmax() const {
 }
 
 
-bool Matrix::operator==(const Matrix& other) const {
+bool Matrix::operator==(const Matrix& other) const noexcept {
 
     if (this->dim() != other.dim()) {
         return false;
