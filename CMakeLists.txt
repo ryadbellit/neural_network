@@ -14,7 +14,7 @@ find_package(OpenMP REQUIRED)
 if(MSVC)
     add_compile_options(/W4 /O2)
 else()
-    add_compile_options(-Wall -Wextra -pedantic -O3 -fopenmp)
+    add_compile_options(-Wall -Wextra -pedantic -O3 -fopenmp -march=native)
 endif()
 
 # Définir où se trouvent les fichiers .hpp

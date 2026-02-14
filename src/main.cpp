@@ -18,13 +18,13 @@ int main() {
 
     auto start = std::chrono::steady_clock::now();
 
-    std::cout << matrix.stable_softmax().sum() << std::endl;
+    Matrix matrix3 = matrix * matrix2;
 
     auto end = std::chrono::steady_clock::now();
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
     std::cout << "Fini!" << std::endl;
-    std::cout << "Temps : " << duration.count() << " microseconds" << std::endl;
+    std::cout << "Temps : " << duration.count() << " milliseconds" << std::endl;
 
 }

@@ -14,18 +14,18 @@ public:
         
         switch (type) {
             case Activation::RELU:
-                bound = std::sqrt(2.0 / inputSize); // Xavier initialization
+                bound = heInitialization(inputSize);
                 break;
             case Activation::SOFTMAX:
-                bound = std::sqrt(2.0 / inputSize + outputSize); // He initialization
+                bound = xavierInitialization(inputSize, outputSize);
                 break;
             case Activation::NONE:
-                bound = 0.5;
+                bound = xavierInitialization(inputSize, outputSize);
                 break;
         }
 
         weights.fillRandom(-bound, bound);
-        biases.fill(0.01);
+        biases.fill(0.0);
     }
 
     Matrix forward(const Matrix& input);
@@ -42,6 +42,14 @@ private:
     Matrix lastOutput;
 
     Activation type;
+
+    inline double xavierInitialization(int inputSize, int outputSize) {
+        return std::sqrt(2.0 / (inputSize + outputSize));
+    }
+
+    inline double heInitialization(int inputSize) {
+        return std::sqrt(2.0 / inputSize);
+    }
 
     Matrix applyActivation(const Matrix& matrix);
     Matrix applyActivationDerivative(const Matrix& matrix);

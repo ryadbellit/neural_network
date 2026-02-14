@@ -10,24 +10,36 @@ public:
 
     Matrix(const int rows, const int columns, const std::vector<double>& data) : rows(rows), columns(columns), data_(data) {}
     Matrix(const Matrix& matrix) : Matrix(matrix.rows, matrix.columns, matrix.data_) {}
+    Matrix(Matrix&& other) noexcept : rows(other.rows), columns(other.columns), data_(std::move(other.data_)) {
+        other.rows = 0;
+        other.columns = 0;
+    }
 
     int getRows() const { return rows; }
     int getColumns() const { return columns; }
     int size() const { return columns * rows; }
-    std::pair<double, double> dim() const { return {rows, columns}; }
-
+    std::pair<int, int> dim() const { return {rows, columns}; }
 
     double& operator()(int rows, int columns);
     double operator()(const int rows, const int columns) const;
+
     Matrix operator*(double scale) const;
     Matrix operator/(double scale) const;
+
+    Matrix& operator*=(double scale);
+    Matrix& operator/=(double scale);
 
     Matrix operator+(const Matrix& other) const;
     Matrix operator-(const Matrix& other) const;
     Matrix operator*(const Matrix& other) const;
-    Matrix operator/(const Matrix& other) const;
+
+    Matrix& operator+=(const Matrix& other);
+    Matrix& operator-=(const Matrix& other);
+    Matrix& operator*=(const Matrix& other);
     
-    Matrix& operator=(const Matrix& other) noexcept;
+    
+    Matrix& operator=(const Matrix& other);
+    Matrix& operator=(Matrix&& other) noexcept;
     bool operator==(const Matrix& other) const noexcept;
 
     Matrix relu() const;

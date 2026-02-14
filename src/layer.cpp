@@ -9,10 +9,10 @@ Matrix Layer::forward(const Matrix& input) {
 
     switch (type) {
         case Activation::RELU:
-            result = output.relu();
+            //result = output.relu();
             break;
         case Activation::SOFTMAX:
-            result = output.stable_softmax();
+            //result = output.stable_softmax();
             break;
         case Activation::NONE:
             result = output;

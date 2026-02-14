@@ -87,12 +87,33 @@ Matrix Matrix::operator*(double scale) const {
 }
 
 Matrix Matrix::operator/(double scale) const {
+
+    if (scale == 0) {
+        throw std::invalid_argument("Division by 0");
+    }
+    
     Matrix result = Matrix(this->rows, this->columns);
 
     std::transform(data_.begin(), data_.end(), result.data_.begin(),
                    [scale](double val) { return val / scale; });
 
     return result;
+}
+
+Matrix& Matrix::operator*=(double scale) {
+    std::transform(data_.begin(), data_.end(), data_.begin(),
+                   [scale](double val) { return val * scale; });
+    return *this;
+}
+
+Matrix& Matrix::operator/=(double scale) {
+    if (scale == 0) {
+        throw std::invalid_argument("Division by 0");
+    }
+    std::transform(data_.begin(), data_.end(), data_.begin(),
+                   [scale](double val) { return val / scale; });
+
+    return *this;
 }
 
 double Matrix::sum() const {
@@ -118,78 +139,6 @@ Matrix Matrix::transpose() const {
     return result;
 }
 
-Matrix Matrix::relu() const {
-    
-    Matrix result = Matrix(this->rows, this->columns);
-
-    std::transform(data_.begin(), data_.end(), result.data_.begin(),
-                   [](double val) { return std::max(val, 0.0); });
-
-    return result;
-}
-
-Matrix Matrix::reluDerivative() const {
-
-    Matrix result = Matrix(this->rows, this->columns);
-
-    std::transform(data_.begin(), data_.end(), result.data_.begin(),
-                   [](double val) { return val > 0 ? 1.0 : 0.0 ; });
-
-    return result;
-}
-
-Matrix Matrix::softmax() const {
-
-    Matrix result = Matrix(this->rows, this->columns);
-
-    for (int i = 0; i < rows; i++) {
-
-        double rowSum = 0.0;
-        int offset = i * columns;
-
-        for (int j = 0; j < columns; j++) {
-            double e_x = std::exp(data_[offset + j]);
-            result.data_[offset + j] = e_x;
-            rowSum += e_x;
-        }
-
-        for (int j = 0; j < columns; j++) {
-            result.data_[offset + j] /= (rowSum);
-        }
-    }
-
-    return result;
-}
-
-Matrix Matrix::stable_softmax() const {
-
-    Matrix result = Matrix(this->rows, this->columns);
-
-    for (int i = 0; i < rows; i++) {
-
-        int offset = i * columns;
-        double rowMax = data_[offset];
-
-        for (int j = 1; j < columns; j++) {
-            rowMax = std::max(rowMax, data_[offset + j]);
-        }
-
-        double rowSum = 0.0;
-        for (int j = 0; j < columns; j++) {
-            double e_x = std::exp(data_[offset + j] - rowMax);
-            result.data_[offset + j] = e_x;
-            rowSum += e_x;
-        }
-
-        for (int j = 0; j < columns; j++) {
-            result.data_[offset + j] /= rowSum;
-        }
-    }
-
-    return result;
-}
-
-
 bool Matrix::operator==(const Matrix& other) const noexcept {
 
     if (this->dim() != other.dim()) {
@@ -199,14 +148,25 @@ bool Matrix::operator==(const Matrix& other) const noexcept {
     return this->data_ == other.data_;
 }
 
-Matrix& Matrix::operator=(const Matrix& other) noexcept { // no except needed for std::move()
+Matrix& Matrix::operator=(const Matrix& other) {
 
     if (this != &other) {
         this->rows = other.rows;
         this->columns = other.columns;
-        this->data_ = std::move(other.data_);
+        this->data_ = other.data_;
     }
 
+    return *this;
+}
+
+Matrix& Matrix::operator=(Matrix&& other) noexcept {
+    if (this != &other) {
+        data_ = std::move(other.data_);
+        rows = other.rows;
+        columns = other.columns;
+        other.rows = 0;
+        other.columns = 0;
+    }
     return *this;
 }
 
@@ -248,9 +208,39 @@ Matrix Matrix::elementDivision(const Matrix& other) {
     return result;
 }
 
-
 double Matrix::maxValue() const {
     return *std::max_element(data_.begin(), data_.end());
+}
+
+Matrix& Matrix::operator+=(const Matrix& other) {
+    std::transform(data_.begin(), data_.end(), other.data_.begin(), data_.begin(), std::plus<double>());
+    return *this;
+}
+
+Matrix& Matrix::operator-=(const Matrix& other) {
+    std::transform(data_.begin(), data_.end(), other.data_.begin(), data_.begin(), std::minus<double>());
+    return *this;
+}
+
+Matrix& Matrix::operator*=(const Matrix& other) {
+    if (this->columns != other.rows) {
+        throw std::invalid_argument("Invalid matrices dimensions");
+    }
+
+    Matrix result(this->rows, other.columns);
+
+    #pragma omp parallel for
+    for (int i = 0; i < rows; i++) {
+        for (int k = 0; k < columns; k++) {
+            double val = this->data_[i * this->columns + k];
+            for (int j = 0; j < other.columns; j++) {
+                result.data_[i * other.columns + j] += val * other.data_[k * other.columns + j];
+            }
+        }
+    }
+
+    *this = std::move(result); 
+    return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
