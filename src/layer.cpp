@@ -6,8 +6,10 @@ Matrix Layer::forward(const Matrix& input) {
     Matrix output = (input * weights) + biases;
 
     Matrix result(output.getRows(), output.getColumns());
+    lastInput = input;
+    lastOutput = output;
 
-    switch (type) {
+    switch (activationFunction) {
         case Activation::RELU:
             //result = output.relu();
             break;
@@ -19,17 +21,8 @@ Matrix Layer::forward(const Matrix& input) {
             break;
     }
 
-    this->lastInput = input;
-    this->lastOutput = result;
-
     return result;
 
-}
-
-double Layer::loss(const Matrix& result, int answer) {
-    constexpr double epsilon = 1e-15;
-
-    return -std::log(result(0, answer) == 0 ? epsilon : result(0, answer));
 }
 
 Matrix Layer::backward(const Matrix& outputGradient, const double learningRate) {

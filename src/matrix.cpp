@@ -7,20 +7,21 @@
 #include <chrono>
 #include <stdexcept>
 #include <omp.h>
+#include <functional>
 
 
-double& Matrix::operator()(int rows, int columns) {
-    if (rows >= this->rows || columns >= this->columns || rows < 0 || columns < 0) {
+double& Matrix::operator()(int row, int col) {
+    if (row >= this->rows || col >= this->columns || row < 0 || col < 0) {
         throw std::out_of_range("Position is out of bounds.");
     }
-    return data_[rows * this->columns + columns];
+    return data_[row * this->columns + col];
 }
 
-double Matrix::operator()(const int rows, const int columns) const {
-    if (rows >= this->rows || columns >= this->columns || rows < 0 || columns < 0) {
+double Matrix::operator()(const int row, const int col) const {
+    if (row >= this->rows || col >= this->columns || row < 0 || columns < 0) {
         throw std::out_of_range("Position is out of bounds.");
     }
-    return data_[rows * this->columns + columns];
+    return data_[row * this->columns + col];
 }
 
 Matrix Matrix::operator*(const Matrix& other) const {
@@ -172,13 +173,13 @@ Matrix& Matrix::operator=(Matrix&& other) noexcept {
 
 void Matrix::fillRandom(double lower, double upper) {
 
-    static std::mt19937 generator(std::chrono::system_clock::now().time_since_epoch().count());
+    static std::mt19937_64 generator(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_real_distribution<double> distribution(lower, upper);
 
     std::generate(data_.begin(), data_.end(), [&]() { return distribution(generator); } );
 }
 
-Matrix Matrix::elementMultiplication(const Matrix& other) {
+Matrix Matrix::elementMultiplication(const Matrix& other) const {
 
     if (dim() != other.dim()) {
         throw std::invalid_argument("Matrices should have the same dimensions");
@@ -193,7 +194,7 @@ Matrix Matrix::elementMultiplication(const Matrix& other) {
     return result;
 }
 
-Matrix Matrix::elementDivision(const Matrix& other) {
+Matrix Matrix::elementDivision(const Matrix& other) const {
 
     if (dim() != other.dim()) {
         throw std::invalid_argument("Matrices should have the same dimensions");

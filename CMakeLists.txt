@@ -10,11 +10,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(OpenMP REQUIRED)
 
-# Options de compilation (Alertes maximales et optimisation)
 if(MSVC)
-    add_compile_options(/W4 /O2)
+    add_compile_options(/W4 /WX)
 else()
-    add_compile_options(-Wall -Wextra -pedantic -O3 -fopenmp -march=native)
+    add_compile_options(-Wall -Wextra -pedantic -O3 -march=native)
 endif()
 
 # Définir où se trouvent les fichiers .hpp

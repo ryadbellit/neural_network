@@ -6,19 +6,16 @@ enum class Activation { RELU, SOFTMAX, NONE };
 class Layer {
 public:
     
-    Layer(int inputSize, int outputSize, Activation act = Activation::NONE) : 
-        weights(inputSize, outputSize), biases(1, outputSize), 
-        lastInput(0, 0), lastOutput(0, 0), type(act) {
+    Layer(const int inputSize, const int outputSize, const Activation act = Activation::NONE) : 
+        weights(inputSize, outputSize), biases(1, outputSize), lastInput(), lastOutput(), activationFunction(act) {
         
         double bound;
         
-        switch (type) {
+        switch (activationFunction) {
             case Activation::RELU:
                 bound = heInitialization(inputSize);
                 break;
             case Activation::SOFTMAX:
-                bound = xavierInitialization(inputSize, outputSize);
-                break;
             case Activation::NONE:
                 bound = xavierInitialization(inputSize, outputSize);
                 break;
@@ -30,7 +27,6 @@ public:
 
     Matrix forward(const Matrix& input);
     Matrix backward(const Matrix& outputGradient, const double learningRate);
-    double loss(const Matrix& result, int answer);
     Matrix getWeights() const { return weights; }
     Matrix getBiases() const { return biases; }
     
@@ -41,13 +37,13 @@ private:
     Matrix lastInput;
     Matrix lastOutput;
 
-    Activation type;
+    Activation activationFunction;
 
-    inline double xavierInitialization(int inputSize, int outputSize) {
+    inline double xavierInitialization(const int inputSize, const int outputSize) const {
         return std::sqrt(2.0 / (inputSize + outputSize));
     }
 
-    inline double heInitialization(int inputSize) {
+    inline double heInitialization(const int inputSize) const {
         return std::sqrt(2.0 / inputSize);
     }
 

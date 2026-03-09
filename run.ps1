@@ -7,7 +7,7 @@ cmake ..
 cmake --build . --config Release
 
 # Vérifier si l'exécutable existe (en cherchant dans Debug ou à la racine du build)
-$exePath = "./ai_lib.exe"
+$exePath = "Release/ai_lib.exe"
 
 if (Test-Path $exePath) {
     Write-Host "--- Lancement de l'application ---" -ForegroundColor Green

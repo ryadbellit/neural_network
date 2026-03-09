@@ -51,8 +51,10 @@ public:
     Matrix transpose() const;
     void fillRandom(double lower = -10, double upper = 10);
     double maxValue() const;
-    Matrix elementMultiplication(const Matrix& other);
-    Matrix elementDivision(const Matrix& other);
+    Matrix elementMultiplication(const Matrix& other) const;
+    Matrix elementDivision(const Matrix& other) const;
+
+    std::vector<double>& getData() { return data_; }
 
 private:
     int rows;
