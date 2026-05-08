@@ -47,6 +47,5 @@ private:
         return std::sqrt(2.0 / inputSize);
     }
 
-    Matrix applyActivation(const Matrix& matrix);
     Matrix applyActivationDerivative(const Matrix& matrix);
 };

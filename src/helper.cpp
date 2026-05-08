@@ -1,7 +1,8 @@
 #include "helper.hpp"
 #include "algorithm"
+#include <cmath>
 
-double Helper::loss(const Matrix& result, int answer) {
+double Helper::loss(const Matrix& result, const int answer) {
     constexpr double epsilon = 1e-15;
 
     return -std::log(result(0, answer) == 0 ? epsilon : result(0, answer));

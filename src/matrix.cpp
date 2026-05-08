@@ -209,6 +209,11 @@ Matrix Matrix::elementDivision(const Matrix& other) const {
     return result;
 }
 
+bool Matrix::contains(const double value) const {
+    return std::find(data_.begin(), data_.end(), value) != data_.end();
+}
+
+
 double Matrix::maxValue() const {
     return *std::max_element(data_.begin(), data_.end());
 }

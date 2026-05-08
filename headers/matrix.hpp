@@ -53,6 +53,7 @@ public:
     double maxValue() const;
     Matrix elementMultiplication(const Matrix& other) const;
     Matrix elementDivision(const Matrix& other) const;
+    bool contains(const double value) const;
 
     std::vector<double>& getData() { return data_; }
 

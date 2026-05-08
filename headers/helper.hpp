@@ -2,7 +2,7 @@
 
 namespace Helper {
 
-    double loss(const Matrix& result, int answer);
+    double loss(const Matrix& result, const int answer);
 
     Matrix oneHotEncoding(const int label, const int numLabels);
 
