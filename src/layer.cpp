@@ -1,4 +1,5 @@
-#include <layer.hpp>
+#include "layer.hpp"
+#include "helper.hpp"
 #include <array>
 
 Matrix Layer::forward(const Matrix& input) {
@@ -9,10 +10,10 @@ Matrix Layer::forward(const Matrix& input) {
 
     switch (activationFunction) {
         case Activation::RELU:
-            result = lastOutput.relu();
+            Helper::ReLU(lastOutput);
             break;
         case Activation::SOFTMAX:
-            result = lastOutput.stable_softmax();
+            Helper::softmax(lastInput);
             break;
         case Activation::NONE:
             result = lastOutput;

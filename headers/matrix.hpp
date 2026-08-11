@@ -15,6 +15,9 @@ public:
         other.columns = 0;
     }
 
+    Matrix& operator=(const Matrix& other);
+    Matrix& operator=(Matrix&& other) noexcept;
+
     int getRows() const { return rows; }
     int getColumns() const { return columns; }
     int size() const { return columns * rows; }
@@ -37,19 +40,16 @@ public:
     Matrix& operator-=(const Matrix& other);
     Matrix& operator*=(const Matrix& other);
     
-    
-    Matrix& operator=(const Matrix& other);
-    Matrix& operator=(Matrix&& other) noexcept;
     bool operator==(const Matrix& other) const noexcept;
 
     Matrix relu() const;
     Matrix reluDerivative() const;
     Matrix softmax() const;
-    Matrix stable_softmax() const;
+    Matrix stableSoftmax() const;
     double sum() const;
     void fill(double val);
     Matrix transpose() const;
-    void fillRandom(double lower = -10, double upper = 10);
+    void fillRandom(const double lower = -10, const double upper = 10);
     double maxValue() const;
     Matrix elementMultiplication(const Matrix& other) const;
     Matrix elementDivision(const Matrix& other) const;

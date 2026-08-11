@@ -14,5 +14,5 @@ Matrix NeuralNetwork::forward(Matrix& input) {
 }
 
 void NeuralNetwork::backward() const {
-
+    
 }

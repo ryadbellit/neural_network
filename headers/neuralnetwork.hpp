@@ -1,4 +1,3 @@
-#include "matrix.hpp"
 #include "layer.hpp"
 
 class NeuralNetwork {

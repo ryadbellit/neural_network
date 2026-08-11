@@ -1,4 +1,4 @@
-#include <matrix.hpp>
+#include "matrix.hpp"
 
 #include <algorithm>
 #include <random>
@@ -171,7 +171,7 @@ Matrix& Matrix::operator=(Matrix&& other) noexcept {
     return *this;
 }
 
-void Matrix::fillRandom(double lower, double upper) {
+void Matrix::fillRandom(const double lower, const double upper) {
 
     static std::mt19937_64 generator(std::chrono::system_clock::now().time_since_epoch().count());
     std::uniform_real_distribution<double> distribution(lower, upper);

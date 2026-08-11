@@ -16,4 +16,10 @@ int main() {
     matrix.fillRandom();
     matrix2.fillRandom();
 
+    std::cout << matrix << std::endl;
+    std::cout << "------------------------------\n\n\n\n\n\n";
+    std::cout << matrix2 << std::endl;
+
+
+
 }
